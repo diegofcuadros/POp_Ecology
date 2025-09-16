@@ -25,8 +25,19 @@ const PopulationEcologyPlatform = () => {
   const [time, setTime] = useState(0);
   const [data, setData] = useState<DataPoint[]>([]);
   const [builderElements, setBuilderElements] = useState<BuilderElement[]>([]);
-  const [dragState, setDragState] = useState({ isDragging: false, elementId: null, startX: 0, startY: 0, startElementX: 0, startElementY: 0 });
-  const [editingText, setEditingText] = useState({ id: null, value: '' });
+  const [dragState, setDragState] = useState<{
+    isDragging: boolean;
+    elementId: number | null;
+    startX: number;
+    startY: number;
+    startElementX: number;
+    startElementY: number;
+  }>({ isDragging: false, elementId: null, startX: 0, startY: 0, startElementX: 0, startElementY: 0 });
+
+  const [editingText, setEditingText] = useState<{
+    id: number | null;
+    value: string;
+  }>({ id: null, value: '' });
   const canvasRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<NodeJS.Timeout>();
 
@@ -64,20 +75,20 @@ const PopulationEcologyPlatform = () => {
   const [useTestData, setUseTestData] = useState(false);
 
   // Discrete simulation functions - for exponential and logistic
-  const exponentialGrowthDiscrete = (N) => {
+  const exponentialGrowthDiscrete = (N: number): number => {
     if (N <= 0) return 0;
     const netGrowthRate = params.birthRate - params.deathRate;
     return N * (1 + netGrowthRate);
   };
 
-  const logisticGrowthDiscrete = (N) => {
+  const logisticGrowthDiscrete = (N: number): number => {
     if (N <= 0) return 0;
     const netGrowthRate = params.birthRate - params.deathRate;
     return N * (1 + netGrowthRate * (1 - N / params.K));
   };
 
   // Differential equation models using Euler integration with multiple steps
-  const predatorPreyODE = (N, P, timeIncrement) => {
+  const predatorPreyODE = (N: number, P: number, timeIncrement: number): { N: number; P: number } => {
     if (N <= 0 || P <= 0) {
       return { N: Math.max(0, N), P: Math.max(0, P) };
     }
@@ -107,7 +118,7 @@ const PopulationEcologyPlatform = () => {
     return { N: currentN, P: currentP };
   };
 
-  const competitionODE = (N1, N2, timeIncrement) => {
+  const competitionODE = (N1: number, N2: number, timeIncrement: number): { N1: number; N2: number } => {
     if (N1 <= 0 || N2 <= 0) {
       return { N1: Math.max(0, N1), N2: Math.max(0, N2) };
     }
@@ -266,7 +277,7 @@ const PopulationEcologyPlatform = () => {
     }
   }, [selectedModel, useTestData, params.N0, params.P0, params.N1_0, params.N2_0]);
 
-  const addBuilderElement = (type) => {
+  const addBuilderElement = (type: string) => {
     const newElement = {
       id: Date.now(),
       type,
@@ -317,7 +328,7 @@ const PopulationEcologyPlatform = () => {
     }
   }, [dragState]);
 
-  const handleMouseDown = (e, elementId) => {
+  const handleMouseDown = (e: React.MouseEvent, elementId: number) => {
     e.preventDefault();
     const element = builderElements.find(el => el.id === elementId);
     if (element) {
@@ -333,7 +344,7 @@ const PopulationEcologyPlatform = () => {
   };
 
   // Text editing functionality
-  const handleDoubleClick = (e, elementId) => {
+  const handleDoubleClick = (e: React.MouseEvent, elementId: number) => {
     e.preventDefault();
     e.stopPropagation();
     const element = builderElements.find(el => el.id === elementId);
@@ -342,7 +353,7 @@ const PopulationEcologyPlatform = () => {
     }
   };
 
-  const handleTextChange = (value) => {
+  const handleTextChange = (value: string) => {
     setEditingText(prev => ({ ...prev, value }));
   };
 
@@ -361,7 +372,7 @@ const PopulationEcologyPlatform = () => {
     setEditingText({ id: null, value: '' });
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleTextSave();
     } else if (e.key === 'Escape') {
@@ -388,7 +399,7 @@ const PopulationEcologyPlatform = () => {
   };
 
   const ParameterControls = () => {
-    const updateParam = (param, value) => {
+    const updateParam = (param: string, value: string) => {
       setParams(prev => ({ ...prev, [param]: parseFloat(value) }));
     };
 
