@@ -19,6 +19,8 @@ interface BuilderElement {
   text?: string;
 }
 
+type ModelType = 'exponential' | 'logistic' | 'predatorprey' | 'competition';
+
 const PopulationEcologyPlatform = () => {
   const [activeTab, setActiveTab] = useState('builder');
   const [isPlaying, setIsPlaying] = useState(false);
@@ -39,7 +41,6 @@ const PopulationEcologyPlatform = () => {
     value: string;
   }>({ id: null, value: '' });
   const canvasRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number | null>(null);
 
   // Model parameters
   const [params, setParams] = useState({
@@ -69,7 +70,7 @@ const PopulationEcologyPlatform = () => {
     timeStep: 0.2  // Larger visualization time step
   });
 
-  const [selectedModel, setSelectedModel] = useState('exponential');
+  const [selectedModel, setSelectedModel] = useState<ModelType>('exponential');
   const [showEquation, setShowEquation] = useState(false);
   const [simulationSpeed, setSimulationSpeed] = useState(50);
   const [useTestData, setUseTestData] = useState(false);
@@ -381,7 +382,7 @@ const PopulationEcologyPlatform = () => {
   };
 
   const ModelEquations = () => {
-    const equations = {
+    const equations: Record<ModelType, string> = {
       exponential: "N(t+1) = N(t) + births - deaths\nN(t+1) = N(t) + bN(t) - dN(t)\nN(t+1) = N(t)(1 + b - d)",
       logistic: "N(t+1) = N(t) + births - deaths\nbirths = bN(t)(1 - N(t)/K)\ndeaths = dN(t)",
       predatorprey: "dN/dt = aN - bNP\ndP/dt = cNP - dP\n\nClassic Lotka-Volterra equations",
@@ -399,7 +400,7 @@ const PopulationEcologyPlatform = () => {
   };
 
   const ParameterControls = () => {
-    const updateParam = (param: string, value: string) => {
+    const updateParam = (param: keyof typeof params, value: string) => {
       setParams(prev => ({ ...prev, [param]: parseFloat(value) }));
     };
 
