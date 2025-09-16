@@ -39,7 +39,7 @@ const PopulationEcologyPlatform = () => {
     value: string;
   }>({ id: null, value: '' });
   const canvasRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<NodeJS.Timeout>();
+  const animationRef = useRef<number | null>(null);
 
   // Model parameters
   const [params, setParams] = useState({
@@ -163,7 +163,7 @@ const PopulationEcologyPlatform = () => {
 
   // Animation loop - FIXED TIME SCALING
   useEffect(() => {
-    let intervalId: NodeJS.Timeout | null = null;
+    let intervalId: number | null = null;
     
     if (isPlaying) {
       intervalId = setInterval(() => {
@@ -172,7 +172,7 @@ const PopulationEcologyPlatform = () => {
           
           const lastPoint = prevData[prevData.length - 1];
           const newTime = lastPoint.time + params.timeStep; // Use visualization time step
-          let newPoint = { time: newTime };
+          let newPoint: DataPoint = { time: newTime };
           
           try {
             if (selectedModel === 'exponential') {
@@ -239,7 +239,7 @@ const PopulationEcologyPlatform = () => {
     setIsPlaying(false);
     setTime(0);
     // Initialize with starting point based on current model
-    let initialData = { time: 0 };
+    let initialData: DataPoint = { time: 0 };
     if (selectedModel === 'exponential' || selectedModel === 'logistic') {
       initialData.N = params.N0;
     } else if (selectedModel === 'predatorprey') {
@@ -256,7 +256,7 @@ const PopulationEcologyPlatform = () => {
   useEffect(() => {
     // Force reset when component mounts or model changes
     const initializeData = () => {
-      let initialData = { time: 0 };
+      let initialData: DataPoint = { time: 0 };
       if (selectedModel === 'exponential' || selectedModel === 'logistic') {
         initialData.N = params.N0;
       } else if (selectedModel === 'predatorprey') {
@@ -294,7 +294,7 @@ const PopulationEcologyPlatform = () => {
 
   // Drag functionality
   useEffect(() => {
-    const handleGlobalMouseMove = (e) => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
       if (dragState.isDragging && dragState.elementId && canvasRef.current) {
         const rect = canvasRef.current.getBoundingClientRect();
         const deltaX = e.clientX - dragState.startX;
