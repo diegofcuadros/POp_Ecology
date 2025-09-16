@@ -163,7 +163,7 @@ const PopulationEcologyPlatform = () => {
 
   // Animation loop - FIXED TIME SCALING
   useEffect(() => {
-    let intervalId: number | null = null;
+    let intervalId: ReturnType<typeof setInterval> | null = null;
     
     if (isPlaying) {
       intervalId = setInterval(() => {
