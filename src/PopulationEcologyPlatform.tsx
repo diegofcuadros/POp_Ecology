@@ -1,17 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, Settings, BookOpen, TrendingUp, Users, GitBranch, Shuffle } from 'lucide-react';
+import { Play, Pause, RotateCcw, Settings, BookOpen, TrendingUp } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, ScatterChart, Scatter, Legend } from 'recharts';
+
+// TypeScript interfaces
+interface DataPoint {
+  time: number;
+  N?: number;
+  P?: number;
+  N1?: number;
+  N2?: number;
+}
+
+interface BuilderElement {
+  id: number;
+  type: string;
+  x: number;
+  y: number;
+  text?: string;
+}
 
 const PopulationEcologyPlatform = () => {
   const [activeTab, setActiveTab] = useState('builder');
   const [isPlaying, setIsPlaying] = useState(false);
   const [time, setTime] = useState(0);
-  const [data, setData] = useState([]);
-  const [builderElements, setBuilderElements] = useState([]);
+  const [data, setData] = useState<DataPoint[]>([]);
+  const [builderElements, setBuilderElements] = useState<BuilderElement[]>([]);
   const [dragState, setDragState] = useState({ isDragging: false, elementId: null, startX: 0, startY: 0, startElementX: 0, startElementY: 0 });
   const [editingText, setEditingText] = useState({ id: null, value: '' });
-  const canvasRef = useRef(null);
-  const animationRef = useRef();
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<NodeJS.Timeout>();
 
   // Model parameters
   const [params, setParams] = useState({
@@ -121,7 +138,7 @@ const PopulationEcologyPlatform = () => {
   };
 
   // Test data for debugging
-  const testData = [
+  const testData: DataPoint[] = [
     { time: 0, N: 50, P: 20, N1: 50, N2: 50 },
     { time: 1, N: 55, P: 18, N1: 55, N2: 48 },
     { time: 2, N: 60, P: 16, N1: 60, N2: 46 },
