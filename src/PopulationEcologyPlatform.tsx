@@ -736,6 +736,7 @@ const PopulationEcologyPlatform = () => {
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white">
       <div className="mb-6">
+        <p className="text-lg font-semibold text-gray-600">Landscape Ecology and GIS, University of Cincinnati</p>
         <h1 className="text-3xl font-bold text-gray-800 mb-2">
           Interactive Population Ecology Teaching Platform
         </h1>
